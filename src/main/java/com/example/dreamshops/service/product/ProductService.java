@@ -1,6 +1,6 @@
 package com.example.dreamshops.service.product;
 
-import com.example.dreamshops.exceptions.ProductNotFoundException;
+import com.example.dreamshops.exceptions.ResourceNotFoundException;
 import com.example.dreamshops.model.Category;
 import com.example.dreamshops.model.Product;
 import com.example.dreamshops.repository.CategoryRepository;
@@ -50,14 +50,14 @@ public class ProductService implements IProductService{
     @Override
     public Product getProductById(Long id) {
         return productRepository.findById(id)
-                .orElseThrow(()-> new ProductNotFoundException("Product not found"));
+                .orElseThrow(()-> new ResourceNotFoundException("Product not found"));
     }
 
     @Override
     public void deleteProductById(Long id) {
         productRepository.findById(id).
                 ifPresentOrElse(productRepository::delete,
-                        ()->{throw new ProductNotFoundException("Product not found");});
+                        ()->{throw new ResourceNotFoundException("Product not found");});
     }
 
     @Override
@@ -65,7 +65,7 @@ public class ProductService implements IProductService{
         return productRepository.findById(productId)
                 .map(existingProduct->updateExistingProduct(existingProduct, request))
                 .map(productRepository :: save)
-                .orElseThrow(()-> new ProductNotFoundException("Product not found"));
+                .orElseThrow(()-> new ResourceNotFoundException("Product not found"));
     }
 
     private Product updateExistingProduct(Product existingProduct, ProductUpdateRequest request){
@@ -86,7 +86,7 @@ public class ProductService implements IProductService{
     }
 
     @Override
-    public List<Product> getProductByCategory(String category) {
+    public List<Product> getProductsByCategory(String category) {
         return productRepository.findByCategoryName(category);
     }
 
@@ -97,7 +97,7 @@ public class ProductService implements IProductService{
 
     @Override
     public List<Product> getProductByCategoryAndBrand(String category, String brand) {
-        return productRepository.findByCategoryAndBrand(category, brand);
+        return productRepository.findByCategoryNameAndBrand(category, brand);
     }
 
     @Override
